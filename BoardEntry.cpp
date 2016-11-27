@@ -7,17 +7,49 @@ using namespace std;
 
 BoardEntry :: BoardEntry() {}
 BoardEntry :: ~BoardEntry() {}
+
 EmptyBoardEntry :: EmptyBoardEntry() {}
 EmptyBoardEntry :: ~EmptyBoardEntry() {}
+
+string Role :: myth_creatures[] = {
+    "Anax", "Aster", "Athos", "Alcyoneus", "Almops", "Aloadae",
+    "Amphisbaena", "Antaeus", "Arachne", "Arae", "Argus", "Azeus",
+    "Catoblepas", "Agrius", "Amycus", "Asbolus", "Bienor", "Chiron",
+    "Chthonius", "Cyllarus", "Dictys", "Eurytus", "Eurynomos", "Elatus",
+    "Eurytion", "Hylaeus", "Hylonome", "Nessus", "Perimedes", "Pholos",
+    "Pholus", "Thaumas", "Rhaecus", "Aescaus", "Amphithemis", "Ceteus",
+    "Eurybios", "Faunus", "Gleneus", "Nomeon", "Orthaon", "Petraeus",
+    "Phanes", "Riphonus", "Spargeus", "Cerastes", "Cetus",
+    "Ceuthonymus", "Charon", "Charybdis", "Chthonius", "Crocotta",
+    "Arges", "Brontes", "Steropes", "Polyphemus", "Diomedes",
+    "Dryad", "Echion", "Enceladus", "Erinyes", "Alecto", "Megaera",
+    "Tisiphone", "Gegenees", "Geryon", "Stheno", "Euryale",
+    "Graeae", "Deino", "Enyo", "Pemphredo", "Hecatonchires", "Briareos",
+    "Aegaeon", "Cottus", "Gyges", "Aello", "Celaeno", "Ocypete",
+    "Aphros", "Bythos", "Ipotane", "Keres", "Achlys", "Kobaloi",
+    "Antiphates", "Mimas", "Orthrus", "Orion", "Ouroboros", "Pallas",
+    "Panes", "Periboea", "Philinnion", "Polybotes", "Porphyrion",
+    "Satyrs", "Silenus", "Scylla", "Siren", "Skolopendra", "Circe",
+    "Medea", "Pasiphae", "Spartea", "Taraxippi", "Thoon", "Tityos",
+    "Triton", "Typhon", "Monocerata", "Empousa", "Lamia", "Mormo",
+    "Mormolykeia", "Lycaon"
+};
 
 Role :: Role() {
     current_weight = 0;
     amount_of_gold = 0;
+
+    int length = sizeof(myth_creatures)/sizeof(*myth_creatures);
+    nickname = myth_creatures[rand()%length];
 }
 
 Role :: Role(int choice) {
     current_weight = 0;
     amount_of_gold = 0;
+
+    int length = sizeof(myth_creatures)/sizeof(*myth_creatures);
+    nickname = myth_creatures[rand()%length];
+
     switch (choice) {
         case 1:
             initialize_human();
@@ -144,7 +176,7 @@ void Role :: take_damage(int damage) {
 }
 
 void Role :: print_current_stats() {
-    cout << name << "; ";
+    cout << name << " " << nickname << "; ";
     cout << "Attack = " << attack << "; ";
     cout << "Defence = " << defence << "; ";
     cout << "Health = " << health << "; ";

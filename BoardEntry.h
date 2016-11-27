@@ -51,6 +51,8 @@ class Item : public BoardEntry {
 class Role : public BoardEntry {
     private:
         std::string name;
+        static std::string myth_creatures[];
+        std::string nickname;
         int attack;
         double attack_chance;
         int defence;
