@@ -8,11 +8,11 @@ class Board {
     private:
         int num_rows;
         int num_columns;
-        std::vector<std::vector<BoardEntry>> board;
-        BoardEntry hero;
+        std::vector< std::vector<BoardEntry *> > board;
+        Role* hero;
         int cur_row;
         int cur_col;
-        BoardEntry randomBoardEntry();
+        BoardEntry* randomBoardEntry();
         void print_current_location_information();
         bool is_empty();
 

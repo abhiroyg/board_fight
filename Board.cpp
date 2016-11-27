@@ -4,38 +4,37 @@
 
 using namespace std;
 
-Board :: Board() {initialize()}
+Board :: Board() {initialize();}
 
-void Board :: randomBoardEntry() {
+BoardEntry* Board :: randomBoardEntry() {
     //Empty, Role, Item
     int entry = rand() % 3;
     if (entry == 0) {
-        EmptyBoardEntry empty;
-        return empty;
+        return new EmptyBoardEntry;
     } else if (entry == 1) {
-        return Role::random_role();
+        return new Role((rand() % 5) + 1);
     } else {
-        return Item::random_item();
+        return new Item((rand() % 8) + 1);
     }
 }
 
 void Board :: print_current_location_information() {
-    EmptyBoardEntry empty = dynamic_cast<EmptyBoardEntry>(board[cur_row][cur_col]);
+    EmptyBoardEntry* empty = dynamic_cast<EmptyBoardEntry*> (board[cur_row][cur_col]);
     if (empty != 0) {
         cout << "This location is empty." << endl;
         return;
     }
 
-    Role role = dynamic_cast<Role>(board[cur_row][cur_col]);
+    Role* role = dynamic_cast<Role*> (board[cur_row][cur_col]);
     if (role != 0) {
         cout << "This location has an enemy:" << endl;
-        role.print_current_stats();
+        role->print_current_stats();
         return;
     }
 
-    Item item = dynamic_cast<Item>(board[cur_row][cur_col]);
+    Item* item = dynamic_cast<Item*> (board[cur_row][cur_col]);
     if (item != 0) {
-        cout << "This location has an item: " << item.get_name() << endl;
+        cout << "This location has an item: " << item->get_name() << endl;
         return;
     }
 
@@ -43,11 +42,11 @@ void Board :: print_current_location_information() {
 }
 
 bool Board :: is_empty() {
-    EmptyBoardEntry empty = dynamic_cast<EmptyBoardEntry>(board[cur_row][cur_col]);
+    EmptyBoardEntry* empty = dynamic_cast<EmptyBoardEntry*> (board[cur_row][cur_col]);
     if (empty != 0) {
         return true;
     }
-    return false
+    return false;
 }
 
 void Board :: initialize() {
@@ -77,26 +76,30 @@ void Board :: initialize() {
         return;
     }
 
-    hero = Role(choice);
+    hero = new Role(choice);
 
-    board = vector<vector<BoardEntry>>(num_rows, vector<BoardEntry>(num_columns));
+    board = vector< vector<BoardEntry *> >(num_rows, vector<BoardEntry *>(num_columns));
 
     for (int i = 0; i < num_rows; i++) {
         for (int j = 0; j < num_columns; j++) {
-            board[i][j] = randomBoardEntry();
+            if (i == 0 && j == 0) {
+                board[i][j] = new EmptyBoardEntry;
+            } else {
+                board[i][j] = randomBoardEntry();
+            }
         }
     }
 
-    board[0][0] = hero;
     cur_row = 0;
     cur_col = 0;
 
     int num_turns = 0;
     bool daytime = true;
     for(;;) {
+        cout << endl;
         num_turns++;
 
-        if (num_turns % 5) {
+        if (num_turns % 5 == 0) {
             daytime = !daytime;
 
             if (daytime) {
@@ -110,7 +113,7 @@ void Board :: initialize() {
 
         // Optional: Valid/Invalid movement patterns.
 
-        hero.print_current_stats();
+        hero->print_current_stats();
 
         cout << ":::::::: Please choose an action ::::::::" << endl;
         cout << "Move (N)orth, (S)outh, (E)ast, (W)est or" << endl;
@@ -122,76 +125,93 @@ void Board :: initialize() {
         switch (action) {
             case 'N':
             case 'n':
+                cout << endl;
                 if (cur_row > 0 && cur_row < num_rows) {
                     cur_row -= 1;
                 } else if (cur_row == 0) {
                     cout << "You are already at the top. You can't move further high." << endl;
                 }
+                print_current_location_information();
                 break;
             case 'S':
             case 's':
+                cout << endl;
                 if (cur_row >= 0 && cur_row <= num_rows-2) {
                     cur_row += 1;
                 } else if (cur_row == num_rows-1) {
                     cout << "You are already at the bottom. You can't move further deep." << endl;
                 }
+                print_current_location_information();
                 break;
             case 'E':
             case 'e':
-                if (cur_col >= 0 && cur_col <= cur_cols-2) {
+                cout << endl;
+                if (cur_col >= 0 && cur_col <= num_columns-2) {
                     cur_col += 1;
-                } else if (cur_col == num_cols-1) {
+                } else if (cur_col == num_columns-1) {
                     cout << "You are already at furthest right. You can't go any further." << endl;
                 }
+                print_current_location_information();
                 break;
             case 'W':
             case 'w':
-                if (cur_col > 0 && cur_col < num_cols) {
+                cout << endl;
+                if (cur_col > 0 && cur_col < num_columns) {
                     cur_col -= 1;
                 } else if (cur_col == 0) {
                     cout << "You are already at furthest left. You can't go any further." << endl;
                 }
+                print_current_location_information();
                 break;
             case 'A':
             case 'a':
-                Role enemy = dynamic_cast<Role>(board[cur_row][cur_col]);
-                if (enemy == 0) {
-                    cout << "There is no enemy here. You can't attack." << endl;
-                } else if (hero.confront(enemy, daytime)) {
-                    // If hero defeats enemy, empty the board in that position.
-                    EmptyBoardEntry empty;
-                    board[cur_row][cur_col] = empty;
+                {
+                    cout << endl;
+                    Role* enemy = dynamic_cast<Role*>(board[cur_row][cur_col]);
+                    if (enemy == 0) {
+                        cout << "There is no enemy here. You can't attack." << endl;
+                    } else if (hero->confront(*enemy, daytime)) {
+                        // If hero defeats enemy, empty the board in that position.
+                        board[cur_row][cur_col] = new EmptyBoardEntry;
+                    }
                 }
                 break;
             case 'P':
             case 'p':
-                Item item = dynamic_cast<Item>(board[cur_row][cur_rol]);
-                if (item == 0) {
-                    cout << "There is no item here to pick." << endl;
-                } else if (hero.pick(item)) {
-                    // If hero is successfully able to pick the item.
-                    EmptyBoardEntry empty;
-                    board[cur_row][cur_rol] = empty;
-                    cout << "Picked " << item.get_name() << "from (" << cur_row << ", " << cur_col << ")." << endl;
-                } /* else {
-                    cout << "Could not pick the item." << endl;
-                } */
+                {
+                    cout << endl;
+                    Item* item = dynamic_cast<Item*>(board[cur_row][cur_col]);
+                    if (item == 0) {
+                        cout << "There is no item here to pick." << endl;
+                    } else if (hero->pick(*item)) {
+                        // If hero is successfully able to pick the item.
+                        board[cur_row][cur_col] = new EmptyBoardEntry;
+                        cout << "Picked " << item->get_name() << "from (" << cur_row << ", " << cur_col << ")." << endl;
+                    } /* else {
+                        cout << "Could not pick the item." << endl;
+                    } */
+                }
                 break;
             case 'D':
             case 'd':
+                cout << endl;
                 if (is_empty()) {
-                    Item item = hero.choose_item();
-                    board[cur_row][cur_rol] = item;
+                    Item item = hero->choose_item();
+                    board[cur_row][cur_col] = &item;
                     cout << "Dropped " << item.get_name() << "at (" << cur_row << ", " << cur_col << ")." << endl;
+                } else {
+                    cout << "This place is not empty. You may not drop here." << endl;
                 }
                 break;
             case 'L':
             case 'l':
+                cout << endl;
                 print_current_location_information();
                 break;
             case 'I':
             case 'i':
-                hero.print();
+                cout << endl;
+                hero->print();
                 break;
             case 'X':
             case 'x':
@@ -200,4 +220,4 @@ void Board :: initialize() {
     }
 }
 
-Board :: ~Board() {};
+Board :: ~Board() {}

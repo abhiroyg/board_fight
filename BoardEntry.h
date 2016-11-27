@@ -45,7 +45,6 @@ class Item : public BoardEntry {
         int get_defence_change();
         int get_health_change();
         int get_strength_change();
-        Item random_item();
         ~Item();
 };
 
@@ -68,6 +67,7 @@ class Role : public BoardEntry {
         void initialize_hobbit();
         void initialize_orc();
         void add_items_effects();
+
     public:
         Role();
         Role(int);
@@ -76,7 +76,6 @@ class Role : public BoardEntry {
         int get_defence(bool);
         double get_defence_chance(bool);
         int get_health();
-        Role random_role();
         void print_current_stats();
         int confront(Role, bool);
         void take_damage(int);

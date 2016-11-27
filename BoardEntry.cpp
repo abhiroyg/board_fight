@@ -5,6 +5,11 @@
 
 using namespace std;
 
+BoardEntry :: BoardEntry() {}
+BoardEntry :: ~BoardEntry() {}
+EmptyBoardEntry :: EmptyBoardEntry() {}
+EmptyBoardEntry :: ~EmptyBoardEntry() {}
+
 Role :: Role() {
     current_weight = 0;
     amount_of_gold = 0;
@@ -130,16 +135,12 @@ void Role :: on_successful_defence(int damage, bool daytime) {
     } else if (name == "org" && !daytime) {
         health += 1;
     } else if (name == "hobbit") {
-        health -= rand()%6;
+        health -= rand() % 6;
     }
 }
 
 void Role :: take_damage(int damage) {
     health -= damage;
-}
-
-Role Role :: random_role() {
-    return Role((rand() % 5) + 1);
 }
 
 void Role :: print_current_stats() {
@@ -272,6 +273,9 @@ Item Role :: choose_item() {
     return inventory[choice-1];
 }
 
+Role :: ~Role() {
+}
+
 Item :: Item() {
     attack_change = 0;
     defence_change = 0;
@@ -400,6 +404,5 @@ int Item :: get_strength_change() {
     return strength_change;
 }
 
-Item Item :: random_item() {
-    return Item((rand() % 8) + 1);
+Item :: ~Item() {
 }
