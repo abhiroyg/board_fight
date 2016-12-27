@@ -262,7 +262,7 @@ int Role :: confront(Role enemy, bool daytime) {
 }
 
 bool Role :: pick(Item item) {
-    if (available_categories.find(item.get_category()) != available_categories.end()) {
+    if (item.get_category() == "ring" || available_categories.find(item.get_category()) == available_categories.end()) {
         if (item.get_weight() + current_weight <= strength) {
             inventory.push_back(item);
             current_weight += item.get_weight();
