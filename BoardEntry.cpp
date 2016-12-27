@@ -285,6 +285,11 @@ bool Role :: pick(Item item) {
 void Role :: print() {
     //Prints out inventory and gold.
     cout << "You have " << amount_of_gold << " gold" << endl;
+    if (inventory.size() == 0) {
+        cout << "Your inventory is empty." << endl;
+        return;
+    }
+
     cout << ":::: Inventory ::::" << endl;
     vector<Item> :: iterator it;
     for (it=inventory.begin(); it != inventory.end(); it++) {
@@ -292,17 +297,29 @@ void Role :: print() {
     }
 }
 
-Item Role :: choose_item() {
+Item Role :: drop_item() {
+    if (inventory.size() == 0) {
+        throw "No item to drop.";
+    }
+
     cout << ":::: Inventory ::::" << endl;
     vector<Item> :: iterator it;
     int i = 1;
     for (it=inventory.begin(); it != inventory.end(); it++, i++) {
         cout << i << ". " << it->get_name() << ", " << "weight " << it->get_weight() << endl;
     }
-    cout << "Your choice: ";
+
+    cout << "Your choice (Enter any other number, if you don't want to drop): ";
     int choice;
     cin >> choice;
-    return inventory[choice-1];
+
+    if (choice < 0 || choice > inventory.size()) {
+        throw "Not dropping any item.";
+    } else {
+        Item item = inventory[choice - 1];
+        inventory.erase(inventory.begin() + choice - 1);
+        return item;
+    }
 }
 
 Role :: ~Role() {

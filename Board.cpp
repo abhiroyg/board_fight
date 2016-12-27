@@ -186,7 +186,7 @@ void Board :: initialize() {
                     } else if (hero->pick(*item)) {
                         // If hero is successfully able to pick the item.
                         board[cur_row][cur_col] = new EmptyBoardEntry;
-                        cout << "Picked " << item->get_name() << "from (" << cur_row << ", " << cur_col << ")." << endl;
+                        cout << "Picked " << item->get_name() << " from (" << cur_row << ", " << cur_col << ")." << endl;
                     } /* else {
                         cout << "Could not pick the item." << endl;
                     } */
@@ -196,9 +196,13 @@ void Board :: initialize() {
             case 'd':
                 cout << endl;
                 if (is_empty()) {
-                    Item item = hero->choose_item();
-                    board[cur_row][cur_col] = &item;
-                    cout << "Dropped " << item.get_name() << "at (" << cur_row << ", " << cur_col << ")." << endl;
+                    try {
+                        Item item = hero->drop_item();
+                        board[cur_row][cur_col] = &item;
+                        cout << "Dropped " << item.get_name() << " at (" << cur_row << ", " << cur_col << ")." << endl;
+                    } catch (const char* msg) {
+                        cout << msg << endl;
+                    }
                 } else {
                     cout << "This place is not empty. You may not drop here." << endl;
                 }

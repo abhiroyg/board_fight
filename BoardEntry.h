@@ -84,7 +84,7 @@ class Role : public BoardEntry {
         void on_successful_defence(int, bool);
         bool pick(Item);
         void print();
-        Item choose_item();
+        Item drop_item();
         ~Role();
 };
 
